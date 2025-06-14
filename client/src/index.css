@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(120, 53%, 55%);
+  --secondary-foreground: hsl(60, 9.1%, 97.8%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --warning: hsl(35, 91%, 48%);
+  --warning-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Amazon Trust & Safety custom colors */
+  --amazon-primary: hsl(207, 90%, 54%);
+  --amazon-secondary: hsl(120, 53%, 55%);
+  --amazon-error: hsl(0, 84.2%, 60.2%);
+  --amazon-warning: hsl(35, 91%, 48%);
+  --amazon-neutral: hsl(212, 27%, 27%);
+  --amazon-surface: hsl(0, 0%, 98%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+@layer components {
+  .trust-badge {
+    @apply inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .trust-badge.verified {
+    @apply bg-green-100 text-green-800 border border-green-200;
+  }
+  
+  .trust-badge.warning {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+  }
+  
+  .trust-badge.danger {
+    @apply bg-red-100 text-red-800 border border-red-200;
+  }
+  
+  .metric-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+  }
+  
+  .alert-card {
+    @apply rounded-lg p-3 border-l-4;
+  }
+  
+  .alert-card.critical {
+    @apply bg-red-50 border-red-500;
+  }
+  
+  .alert-card.warning {
+    @apply bg-yellow-50 border-yellow-500;
+  }
+  
+  .alert-card.info {
+    @apply bg-blue-50 border-blue-500;
+  }
+  
+  .supply-chain-event {
+    @apply flex items-start space-x-3 p-3 border-l-2 border-gray-200 hover:border-blue-400 transition-colors;
+  }
+  
+  .scanning-animation {
+    @apply animate-pulse;
+  }
+}
+
+@layer utilities {
+  .text-amazon-primary {
+    color: var(--amazon-primary);
+  }
+  
+  .text-amazon-secondary {
+    color: var(--amazon-secondary);
+  }
+  
+  .text-amazon-error {
+    color: var(--amazon-error);
+  }
+  
+  .text-amazon-warning {
+    color: var(--amazon-warning);
+  }
+  
+  .bg-amazon-primary {
+    background-color: var(--amazon-primary);
+  }
+  
+  .bg-amazon-secondary {
+    background-color: var(--amazon-secondary);
+  }
+  
+  .bg-amazon-error {
+    background-color: var(--amazon-error);
+  }
+  
+  .bg-amazon-warning {
+    background-color: var(--amazon-warning);
+  }
+}
