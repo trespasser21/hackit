@@ -4,3 +4,12 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+server/
+
+# Ignore selected component files
+client/src/components/CustomerInterface.tsx
+client/src/components/EdgeReviewAnalysis.tsx
+client/src/components/ModerationDashboard.tsx
+client/src/components/SupplyChainTracker.tsx
+client/src/components/GraphAnalytics.tsx

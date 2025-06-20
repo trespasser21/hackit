@@ -176,9 +176,10 @@ export default function Dashboard() {
         {/* Customer Interface for all tabs except sellers */}
         {activeTab !== 'sellers' && (
           <div className="mt-8">
-            <CustomerInterface />
+            {/* <CustomerInterface /> */}
           </div>
         )}
+        
       </main>
 
       {/* Real-time Update Indicator */}
