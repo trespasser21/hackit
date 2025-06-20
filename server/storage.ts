@@ -110,6 +110,32 @@ export class MemStorage implements IStorage {
         trustScore: "98.6",
         createdAt: new Date(),
         updatedAt: new Date()
+      },
+      {
+        id: 3,
+        sku: "APL-AIRPODS-FAKE",
+        name: "Apple AirPods Pro (Counterfeit)",
+        category: "Electronics",
+        price: "49.99",
+        digitalTwinId: "DT000000",
+        nfcTagId: "NFC000000",
+        manufacturerId: "UNKNOWN_FACTORY",
+        trustScore: "12.4",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 4,
+        sku: "SONY-WH-FAKE",
+        name: "Sony WH-1000XM5 (Suspected Fake)",
+        category: "Electronics",
+        price: "89.99",
+        digitalTwinId: "DT111111",
+        nfcTagId: "NFC111111",
+        manufacturerId: "COUNTERFEIT_FACTORY_X",
+        trustScore: "8.2",
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ];
 
@@ -140,14 +166,89 @@ export class MemStorage implements IStorage {
         location: "DHL Hub, Hong Kong",
         timestamp: new Date(Date.now() - 18 * 60 * 60 * 1000),
         gpsCoordinates: "22.3193°N, 114.1694°E",
+        temperature: "18.5",
+        humidity: "62.0",
         blockHash: "0xf8a9c7d2154...",
         verificationStatus: "verified",
         metadata: { carrier: "DHL", trackingNumber: "DHL7894561230" }
+      },
+      {
+        id: 3,
+        productId: 3,
+        eventType: "manufacturing",
+        location: "Unauthorized Factory, Guangzhou",
+        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        gpsCoordinates: "23.1291°N, 113.2644°E",
+        temperature: "28.5",
+        humidity: "72.0",
+        blockHash: "0x000000000...",
+        verificationStatus: "failed",
+        metadata: { batchNumber: "FAKE001", qualityCheck: "failed", anomalies: ["incorrect_materials", "missing_certifications"] }
+      },
+      {
+        id: 4,
+        productId: 4,
+        eventType: "manufacturing",
+        location: "Counterfeit Factory X, Unknown",
+        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        gpsCoordinates: "Unknown",
+        temperature: "Unknown",
+        humidity: "Unknown",
+        blockHash: "0x111111111...",
+        verificationStatus: "suspicious",
+        metadata: { batchNumber: "CF-001", qualityCheck: "bypassed", anomalies: ["duplicate_nfc_tag", "grey_market_path"] }
       }
     ];
 
     sampleEvents.forEach(event => {
       this.supplyChainEvents.set(event.id, event);
+    });
+
+    // Initialize reviews with fake detection analysis
+    const sampleReviews: Review[] = [
+      {
+        id: 1,
+        productId: 1,
+        sellerId: null,
+        reviewText: "Great phone, excellent camera quality and battery life. Highly recommend!",
+        rating: 5,
+        authenticityScore: "97.3",
+        imageOriginalityScore: "95.8",
+        analysisStatus: "genuine",
+        edgeModelVersion: "TinyBERT-v2.1",
+        flagged: false,
+        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 2,
+        productId: 3,
+        sellerId: null,
+        reviewText: "Amazing product fast shipping good quality very nice",
+        rating: 5,
+        authenticityScore: "23.8",
+        imageOriginalityScore: "15.2",
+        analysisStatus: "suspicious",
+        edgeModelVersion: "TinyBERT-v2.1",
+        flagged: true,
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 3,
+        productId: 4,
+        sellerId: null,
+        reviewText: "Best headphones ever! Super cheap price! Must buy!!!",
+        rating: 5,
+        authenticityScore: "8.4",
+        imageOriginalityScore: "5.1",
+        analysisStatus: "suspicious",
+        edgeModelVersion: "TinyBERT-v2.1",
+        flagged: true,
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    sampleReviews.forEach(review => {
+      this.reviews.set(review.id, review);
     });
 
     // Initialize moderation alerts
@@ -158,11 +259,27 @@ export class MemStorage implements IStorage {
         severity: "critical",
         title: "Counterfeit Ring Detected",
         description: "15 linked sellers pushing fake AirPods",
-        affectedProducts: ["APL-AIRPODS-PRO"],
+        affectedProducts: ["APL-AIRPODS-FAKE"],
         affectedSellers: ["SELLER001", "SELLER002"],
         status: "open",
+        assignedTo: "moderator_001",
         autoActions: { listingsRemoved: 12, sellersFlag: 3 },
-        createdAt: new Date(Date.now() - 2 * 60 * 1000)
+        createdAt: new Date(Date.now() - 2 * 60 * 1000),
+        resolvedAt: null
+      },
+      {
+        id: 2,
+        alertType: "review_anomaly",
+        severity: "high",
+        title: "Suspicious Review Pattern",
+        description: "Detected bot-generated reviews for fake Sony headphones",
+        affectedProducts: ["SONY-WH-FAKE"],
+        affectedSellers: ["COUNTERFEIT_SELLER_X"],
+        status: "investigating",
+        assignedTo: "ai_moderator_002",
+        autoActions: { reviewsHidden: 23, sellerWarning: 1 },
+        createdAt: new Date(Date.now() - 45 * 60 * 1000),
+        resolvedAt: null
       }
     ];
 
@@ -183,8 +300,15 @@ export class MemStorage implements IStorage {
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = this.currentId++;
     const product: Product = { 
-      ...insertProduct, 
       id,
+      sku: insertProduct.sku || "",
+      name: insertProduct.name || "",
+      category: insertProduct.category || "",
+      price: insertProduct.price || "0",
+      digitalTwinId: insertProduct.digitalTwinId || null,
+      nfcTagId: insertProduct.nfcTagId || null,
+      manufacturerId: insertProduct.manufacturerId || null,
+      trustScore: insertProduct.trustScore || null,
       createdAt: new Date(),
       updatedAt: new Date()
     };

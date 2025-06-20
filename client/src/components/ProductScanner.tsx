@@ -34,19 +34,28 @@ export default function ProductScanner() {
       const response = await apiRequest("POST", "/api/scan-product", scanData);
       return await response.json() as ScanResult;
     },
-    onSuccess: (result) => {
+    onSuccess: (result: any) => {
+      const productName = selectedProduct.includes("FAKE") ? 
+        (selectedProduct.includes("AIRPODS") ? "AirPods Pro (COUNTERFEIT DETECTED)" : "Sony WH-1000XM5 (COUNTERFEIT DETECTED)") :
+        (selectedProduct.includes("APL") ? "iPhone 15 Pro Max" : "Sony WH-1000XM5");
+        
       const newScan: RecentScan = {
         id: Date.now(),
-        productName: `Product ${result.productId}`,
-        sku: `SKU-${result.productId}`,
+        productName,
+        sku: selectedProduct,
         status: result.verified ? 'verified' : 'suspicious',
         timestamp: new Date()
       };
       setRecentScans(prev => [newScan, ...prev.slice(0, 4)]);
       
+      const riskLevel = result.aiAnalysis?.riskLevel || "UNKNOWN";
+      const anomalies = result.aiAnalysis?.detectedAnomalies || [];
+      
       toast({
-        title: result.verified ? "Product Verified" : "Verification Failed",
-        description: `Trust Score: ${result.trustScore}%`,
+        title: result.verified ? "✅ Product Verified" : `⚠️ ${riskLevel} RISK - Counterfeit Detected`,
+        description: result.verified ? 
+          `Trust Score: ${result.trustScore}% - Authentic product` :
+          `Trust Score: ${result.trustScore}% - ${anomalies.length} anomalies detected`,
         variant: result.verified ? "default" : "destructive"
       });
     },
@@ -62,13 +71,22 @@ export default function ProductScanner() {
     }
   });
 
+  const [selectedProduct, setSelectedProduct] = useState("APL-IP15PM-256");
+
   const handleStartScan = () => {
     setIsScanning(true);
     // Simulate scanning delay
     setTimeout(() => {
-      scanMutation.mutate({ qrCode: "APL-IP15PM-256" });
+      scanMutation.mutate({ qrCode: selectedProduct });
     }, 3000);
   };
+
+  const productOptions = [
+    { sku: "APL-IP15PM-256", name: "iPhone 15 Pro Max (Genuine)" },
+    { sku: "SN-WTCH-S9", name: "Sony WH-1000XM5 (Genuine)" },
+    { sku: "APL-AIRPODS-FAKE", name: "AirPods Pro (FAKE - Test Detection)" },
+    { sku: "SONY-WH-FAKE", name: "Sony WH-1000XM5 (FAKE - Test Detection)" }
+  ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -88,6 +106,24 @@ export default function ProductScanner() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Product Selection for Demo */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select Product to Scan (Demo Mode)
+          </label>
+          <select 
+            value={selectedProduct} 
+            onChange={(e) => setSelectedProduct(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amazon-primary"
+          >
+            {productOptions.map((option) => (
+              <option key={option.sku} value={option.sku}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Scanner Interface */}
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
           <div className={`mb-4 ${isScanning ? 'scanning-animation' : ''}`}>
