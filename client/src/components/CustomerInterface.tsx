@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
-export default function CustomerInterface() {
+export default function CustomerInterface({ isSellerView = false }) {
   const [isScanning, setIsScanning] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const { toast } = useToast();
@@ -65,7 +65,7 @@ export default function CustomerInterface() {
     <div className="bg-gradient-to-br from-amazon-primary/5 to-amazon-secondary/5 rounded-xl p-8">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold text-amazon-neutral mb-6 text-center">
-          Customer Product Verification
+          {isSellerView ? "Seller Product Overview" : "Customer Product Verification"}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -92,42 +92,60 @@ export default function CustomerInterface() {
                 </div>
               </div>
 
-              <Button 
-                onClick={handleAddToCart}
-                disabled={isAdding}
-                className="w-full bg-amazon-primary hover:bg-blue-700 mb-3"
-              >
-                {isAdding ? (
-                  <>
-                    <Clock className="mr-2 h-4 w-4 animate-spin" />
-                    Adding to Cart...
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Add to Cart
-                  </>
-                )}
-              </Button>
-              
-              <Button 
-                onClick={handleScanProduct}
-                disabled={isScanning}
-                variant="outline"
-                className="w-full hover:bg-gray-50"
-              >
-                {isScanning ? (
-                  <>
-                    <QrCode className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying Authenticity...
-                  </>
-                ) : (
-                  <>
-                    <QrCode className="mr-2 h-4 w-4" />
-                    Scan to Verify Authenticity
-                  </>
-                )}
-              </Button>
+              {/* Only show buttons if not in seller view */}
+              {!isSellerView && (
+                <>
+                  <Button 
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                    className="w-full bg-amazon-primary hover:bg-blue-700 mb-3"
+                  >
+                    {isAdding ? (
+                      <>
+                        <Clock className="mr-2 h-4 w-4 animate-spin" />
+                        Adding to Cart...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        Add to Cart
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    onClick={handleScanProduct}
+                    disabled={isScanning}
+                    variant="outline"
+                    className="w-full hover:bg-gray-50"
+                  >
+                    {isScanning ? (
+                      <>
+                        <QrCode className="mr-2 h-4 w-4 animate-spin" />
+                        Verifying Authenticity...
+                      </>
+                    ) : (
+                      <>
+                        <QrCode className="mr-2 h-4 w-4" />
+                        Scan to Verify Authenticity
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
+
+              {/* Show seller-specific info if in seller view */}
+              {isSellerView && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center space-x-2">
+                    <Shield className="text-blue-600" size={20} />
+                    <span className="text-blue-800 font-medium">Seller Dashboard View</span>
+                  </div>
+                  <p className="text-sm text-blue-600 mt-1">
+                    Product verification status for your customers
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
